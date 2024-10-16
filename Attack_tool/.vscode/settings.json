@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "evil-twin.h": "c"
+        "evil-twin.h": "c",
+        "packetsniffer.h": "c"
     }
 }

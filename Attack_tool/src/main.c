@@ -1,4 +1,5 @@
 #include "evil-twin.h"
+#include "packetSniffer.h"
 
 void app_main() {
     //Initialize NVS for memory.
@@ -9,6 +10,6 @@ void app_main() {
       ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-    setUpAP();
+    showNearbyNetworks();
     
 }
