@@ -55,6 +55,8 @@ wifi_ap_record_t showNearbyNetworks()
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
 {
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
+    
+    
     printf("got new packet : %d\n", pkt->rx_ctrl.timestamp);
 }
 
@@ -66,6 +68,7 @@ void settingupPromiscuousMode()
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_NULL)); // wifi mode is null beacuse we are not connecting or ap.
+    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
     ESP_ERROR_CHECK(esp_wifi_start());
 
 
