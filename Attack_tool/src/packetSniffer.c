@@ -52,12 +52,26 @@ wifi_ap_record_t showNearbyNetworks()
     return bestrec; // else return the open 1.
 }
 
+void printMac(uint8_t* srcmac, uint8_t* dstmac)
+{
+    printf("-----------------\n");
+    printf("New packet received: \n");
+    printf("src: %2x:%2x:%2x:%2x:%2x:%2x\n", srcmac[0],srcmac[1],
+                                           srcmac[2],srcmac[3],
+                                           srcmac[4],srcmac[5]);
+    printf("dst: %2x:%2x:%2x:%2x:%2x:%2x\n", dstmac[0],dstmac[1],
+                                           dstmac[2],dstmac[3],
+                                           dstmac[4],dstmac[5]);
+    printf("------------------\n");
+}
+
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
 {
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
+    wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload;
+
     
-    
-    printf("got new packet : %d\n", pkt->rx_ctrl.timestamp);
+    printMac(machdr->addr2,machdr->addr1);
 }
 
 
