@@ -10,6 +10,6 @@ void app_main() {
       ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-    showNearbyNetworks();
+    settingupPromiscuousMode();
     
 }

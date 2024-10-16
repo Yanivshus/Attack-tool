@@ -15,3 +15,6 @@
 
 wifi_ap_record_t showNearbyNetworks();
 char* get_auth_mode(wifi_auth_mode_t mode);
+
+void settingupPromiscuousMode();
+void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type);

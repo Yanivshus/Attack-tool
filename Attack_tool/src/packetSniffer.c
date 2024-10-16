@@ -45,5 +45,34 @@ wifi_ap_record_t showNearbyNetworks()
     if(found == 0 && maxrec > 0){
         return wfrecords[0];
     }
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_NULL));
+    ESP_ERROR_CHECK(esp_netif_deinit());
+    ESP_ERROR_CHECK(esp_wifi_deinit());
+    
     return bestrec; // else return the open 1.
+}
+
+void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
+{
+    wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
+    printf("got new packet : %d\n", pkt->rx_ctrl.timestamp);
+}
+
+
+void settingupPromiscuousMode()
+{
+    
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_NULL)); // wifi mode is null beacuse we are not connecting or ap.
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+
+    esp_wifi_set_promiscuous(false);
+    //set up handler for promiscous
+    wifi_promiscuous_cb_t cb = (wifi_promiscuous_cb_t)handlePromPackets;
+    esp_wifi_set_promiscuous_rx_cb(cb);
+    esp_wifi_set_promiscuous(true);
+
 }
