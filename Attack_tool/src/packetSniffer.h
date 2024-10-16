@@ -42,3 +42,4 @@ char* get_auth_mode(wifi_auth_mode_t mode);
 void settingupPromiscuousMode();
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type);
 void printMac(uint8_t* srcmac, uint8_t* dstmac);
+void channel_hopper(void *param);

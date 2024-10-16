@@ -62,6 +62,9 @@ void printMac(uint8_t* srcmac, uint8_t* dstmac)
     printf("dst: %2x:%2x:%2x:%2x:%2x:%2x\n", dstmac[0],dstmac[1],
                                            dstmac[2],dstmac[3],
                                            dstmac[4],dstmac[5]);
+    int currChannel = 0;
+    esp_wifi_get_channel(&currChannel, NULL);
+    printf("Curr channel: %d\n", currChannel);
     printf("------------------\n");
 }
 
@@ -70,7 +73,7 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
     wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload;
 
-    
+    if(type != WIFI_PKT_DATA){ return;}
     printMac(machdr->addr2,machdr->addr1);
 }
 
@@ -83,13 +86,32 @@ void settingupPromiscuousMode()
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_NULL)); // wifi mode is null beacuse we are not connecting or ap.
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
+
+
     ESP_ERROR_CHECK(esp_wifi_start());
 
 
     esp_wifi_set_promiscuous(false);
     //set up handler for promiscous
+
     wifi_promiscuous_cb_t cb = (wifi_promiscuous_cb_t)handlePromPackets;
     esp_wifi_set_promiscuous_rx_cb(cb);
+
+    wifi_promiscuous_filter_t filter;
+    filter.filter_mask = WIFI_PROMIS_FILTER_MASK_ALL;
+    esp_wifi_set_promiscuous_filter(&filter);
+
     esp_wifi_set_promiscuous(true);
 
+    xTaskCreate(channel_hopper , "channel_hopp", 8192, NULL, 10, NULL);
+
+}
+void channel_hopper(void *param)
+{
+    uint8_t channel = 1;
+    while (true) {
+        esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
+        channel = (channel % 13) + 1;  // Hop between channels 1-13
+        vTaskDelay(500 / portTICK_PERIOD_MS);  // Switch every 500ms
+    }
 }
