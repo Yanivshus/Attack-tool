@@ -68,6 +68,7 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
     if(type != WIFI_PKT_DATA){ return;} // only data packet metter.
 
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
+    logRawPacket(pkt->payload, pkt->rx_ctrl.sig_len);
 
     wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload; // get init mac header
 
@@ -77,15 +78,21 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
     wifi_frame_control_t frame_control;
     frame_control.frame_control_value = machdr->frame_control;
 
+
     int sizeCurr = 0;
+    
+    if (frame_control.type == 0b00 && frame_control.subtype == 0b0001) { // Data frame
+        sizeCurr += sizeof(qos_control_t); // Add QoS Control size if applicable
+    }
+
     if(frame_control.to_from_ds == 0b11) // if this field is 11 that means there is fourth address. this field also defines which source and dst (or ap src dst).
     {
         sizeCurr += sizeof(wifi_mac_header_full_t); 
-        eth_header = (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_full_t));
+        eth_header = (ethernet_header_t*)(pkt->payload + sizeCurr);
     }
     else{
         sizeCurr += sizeof(wifi_mac_header_t); 
-        eth_header = (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_t));
+        eth_header = (ethernet_header_t*)(pkt->payload + sizeCurr);
     }
 
     if (pkt->rx_ctrl.sig_len < sizeCurr + sizeof(ethernet_header_t)) {
@@ -114,6 +121,15 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
     
     //printMac(machdr->addr2,machdr->addr1);
     
+}
+
+void logRawPacket(const void *buf, size_t len) {
+    const uint8_t *data = (const uint8_t *)buf;
+    printf("Raw Packet: ");
+    for (size_t i = 0; i < len; i++) {
+        printf("%02x ", data[i]);
+    }
+    printf("\n");
 }
 
 

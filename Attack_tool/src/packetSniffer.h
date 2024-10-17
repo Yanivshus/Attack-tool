@@ -71,6 +71,15 @@ typedef struct {
     uint8_t dst_addr[4];
 } __attribute__((packed)) ipv4_header_t;
 
+typedef struct {
+    uint16_t tid : 4;       // Traffic Identifier (TID) for prioritization
+    uint16_t eosp : 1;      // End of Service Period (indicates if this is the last frame in a burst)
+    uint16_t ack_policy : 2; // Acknowledgment policy
+    uint16_t reserved : 1;  // Reserved bit
+    uint16_t txop_limit : 7; // Transmission Opportunity Limit
+    uint16_t queue_size : 1; // Queue size indicator (used in some QoS mechanisms)
+} __attribute__((packed)) qos_control_t;
+
 wifi_ap_record_t showNearbyNetworks();
 char* get_auth_mode(wifi_auth_mode_t mode);
 
@@ -78,3 +87,4 @@ void settingupPromiscuousMode();
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type);
 void printMac(uint8_t* srcmac, uint8_t* dstmac);
 void channel_hopper(void *param);
+void logRawPacket(const void *buf, size_t len);
