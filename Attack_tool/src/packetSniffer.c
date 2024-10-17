@@ -54,8 +54,6 @@ wifi_ap_record_t showNearbyNetworks()
 
 void printMac(uint8_t* srcmac, uint8_t* dstmac)
 {
-    printf("-----------------\n");
-    printf("New packet received: \n");
     printf("src: %2x:%2x:%2x:%2x:%2x:%2x\n", srcmac[0],srcmac[1],
                                              srcmac[2],srcmac[3],
                                              srcmac[4],srcmac[5]);
@@ -63,39 +61,44 @@ void printMac(uint8_t* srcmac, uint8_t* dstmac)
     printf("dst: %2x:%2x:%2x:%2x:%2x:%2x\n", dstmac[0],dstmac[1],
                                              dstmac[2],dstmac[3],
                                              dstmac[4],dstmac[5]);
-    uint8_t currChannel = 0;
-    esp_wifi_get_channel(&currChannel, NULL);
-    printf("Curr channel: %d\n", currChannel);
-    printf("------------------\n");
 }
 
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
 {
-    wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
-
     if(type != WIFI_PKT_DATA){ return;} // only data packet metter.
+
+    wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
 
     wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload; // get init mac header
 
     ethernet_header_t* eth_header;
-    // get control frame in struct format to check for fourth address
-    wifi_frame_control_t* machdr_framecontrol = (wifi_frame_control_t*)machdr->frame_control;
 
-    
-    if(machdr_framecontrol->to_from_ds == 0b11) // if this field is 11 that means there is fourth address. this field also defines which source and dst (or ap src dst).
+    // get control frame in struct format to check for fourth address
+    wifi_frame_control_t frame_control;
+    frame_control.frame_control_value = machdr->frame_control;
+
+    int sizeCurr = 0;
+    if(frame_control.to_from_ds == 0b11) // if this field is 11 that means there is fourth address. this field also defines which source and dst (or ap src dst).
     {
+        sizeCurr += sizeof(wifi_mac_header_full_t); 
         eth_header = (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_full_t));
     }
     else{
+        sizeCurr += sizeof(wifi_mac_header_t); 
         eth_header = (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_t));
     }
-    
-    
-    
-    
 
-    printf("ethertype: %x\n", eth_header->ethertype);
-    if(eth_header->ethertype == 0x0800)
+    if (pkt->rx_ctrl.sig_len < sizeCurr + sizeof(ethernet_header_t)) {
+        printf("Invalid packet length\n");
+        return;
+    }
+    printf("packet:\n");
+    printMac(eth_header->src_mac, eth_header->dest_mac);
+    printMac(machdr->addr2, machdr->addr1);
+    printf("-------------\n");
+
+    printf("ethertype: %x\n", __ntohs(eth_header->ethertype));
+    /*if(eth_header->ethertype == 0x0800)
     {
         printMac(machdr->addr2,machdr->addr1);
         printf("IP");
@@ -107,10 +110,9 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
     }else
     {
         puts("NOT");
-    }
+    }*/
     
     //printMac(machdr->addr2,machdr->addr1);
-
     
 }
 

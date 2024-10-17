@@ -15,18 +15,21 @@
 #include "esp_wifi_types.h"
 
 
-typedef struct 
+typedef union 
 {
-    uint8_t version : 2;
-    uint8_t type : 2;
-    uint8_t subtype : 4;
-    uint8_t to_from_ds : 2; // to + from together
-    uint8_t mf : 1;
-    uint8_t retry : 1;
-    uint8_t pwr : 1;
-    uint8_t more : 1;
-    uint8_t w : 1;
-    uint8_t o : 1;
+    uint16_t frame_control_value; // Raw 16-bit frame control value
+    struct {
+        uint8_t version : 2;
+        uint8_t type : 2;
+        uint8_t subtype : 4;
+        uint8_t to_from_ds : 2; // to and from ds are together
+        uint8_t mf : 1;
+        uint8_t retry : 1;
+        uint8_t pwr : 1;
+        uint8_t more : 1;
+        uint8_t w : 1;
+        uint8_t o : 1;
+    };
 } __attribute__((packed)) wifi_frame_control_t;
 
 
