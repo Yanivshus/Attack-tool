@@ -10,14 +10,17 @@ void setUpAP()
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler_AP, NULL,NULL));
     
+    wifi_ap_record_t recNet = showNearbyNetworks();
+
+
     wifi_config_t wifi_conf = {
         .ap = {
-            .ssid = SSID,
+            .ssid = recNet.ssid,
             .password = "",
             .channel = 1,
             .max_connection = 10,
-            .ssid_len = strlen(SSID),
-            .authmode = WIFI_AUTH_WPA2_PSK,
+            .ssid_len = strlen(recNet.ssid),
+            .authmode = WIFI_AUTH_OPEN,
         },
     };
     

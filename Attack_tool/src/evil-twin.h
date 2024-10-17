@@ -15,11 +15,7 @@
 #include "esp_system.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
-
-
-#define SSID "yaniv"
-
-
+#include "packetSniffer.h"
 
 
 void setUpAP();
