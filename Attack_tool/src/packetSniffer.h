@@ -15,6 +15,21 @@
 #include "esp_wifi_types.h"
 
 
+typedef struct 
+{
+    uint8_t version : 2;
+    uint8_t type : 2;
+    uint8_t subtype : 4;
+    uint8_t to_from_ds : 2; // to + from together
+    uint8_t mf : 1;
+    uint8_t retry : 1;
+    uint8_t pwr : 1;
+    uint8_t more : 1;
+    uint8_t w : 1;
+    uint8_t o : 1;
+} __attribute__((packed)) wifi_frame_control_t;
+
+
 typedef struct {
     uint16_t frame_control;
     uint16_t duration;
@@ -23,6 +38,16 @@ typedef struct {
     uint8_t addr3[6];  // BSSID or Third Address
     uint16_t sequence_control;
 } __attribute__((packed)) wifi_mac_header_t;
+
+typedef struct {
+    uint16_t frame_control;
+    uint16_t duration;
+    uint8_t addr1[6];  // receiving ap
+    uint8_t addr2[6];  // sending ap
+    uint8_t addr3[6];  // dst
+    uint16_t sequence_control;
+    uint8_t addr4[6];  // src
+} __attribute__((packed)) wifi_mac_header_full_t;
 
 typedef struct {
     uint8_t dest_mac[6];     // Destination MAC address

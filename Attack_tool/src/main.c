@@ -11,7 +11,7 @@ void app_main() {
     }
     ESP_ERROR_CHECK(ret);
 
-    setUpAP();
-    //settingupPromiscuousMode();
+    //setUpAP();
+    settingupPromiscuousMode();
     
 }

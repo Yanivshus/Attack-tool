@@ -13,9 +13,6 @@ void setUpAP()
     // get best network to mock, better be open one so the user wont suspect, will work best in public places
     wifi_ap_record_t recNet = showNearbyNetworks();
 
-    
-
-
     wifi_config_t wifi_conf =
     {
         .ap = {
@@ -38,6 +35,8 @@ void setUpAP()
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP,&wifi_conf));
     ESP_ERROR_CHECK(esp_wifi_start());
     ESP_LOGI(TAG, "Wi-Fi started." );
+
+    //Can enhance the attack by sniffing the network after people connect ...
 }
 
 static void wifi_event_handler_AP(void* arg, esp_event_base_t even_base, int32_t event_id, void* event_data)

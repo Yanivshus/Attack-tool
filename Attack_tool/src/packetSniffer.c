@@ -72,10 +72,29 @@ void printMac(uint8_t* srcmac, uint8_t* dstmac)
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
 {
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
-    wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload;
-    ethernet_header_t* eth_header =  (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_t));
-    //if(type != WIFI_PKT_DATA){ return;}
 
+    if(type != WIFI_PKT_DATA){ return;} // only data packet metter.
+
+    wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload; // get init mac header
+
+    ethernet_header_t* eth_header;
+    // get control frame in struct format to check for fourth address
+    wifi_frame_control_t* machdr_framecontrol = (wifi_frame_control_t*)machdr->frame_control;
+
+    
+    if(machdr_framecontrol->to_from_ds == 0b11) // if this field is 11 that means there is fourth address. this field also defines which source and dst (or ap src dst).
+    {
+        eth_header = (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_full_t));
+    }
+    else{
+        eth_header = (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_t));
+    }
+    
+    
+    
+    
+
+    printf("ethertype: %x\n", eth_header->ethertype);
     if(eth_header->ethertype == 0x0800)
     {
         printMac(machdr->addr2,machdr->addr1);
