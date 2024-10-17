@@ -80,7 +80,7 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
 
 
     int sizeCurr = 0;
-    
+
     if (frame_control.type == 0b00 && frame_control.subtype == 0b0001) { // Data frame
         sizeCurr += sizeof(qos_control_t); // Add QoS Control size if applicable
     }
@@ -99,6 +99,8 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
         printf("Invalid packet length\n");
         return;
     }
+
+    
     printf("packet:\n");
     printMac(eth_header->src_mac, eth_header->dest_mac);
     printMac(machdr->addr2, machdr->addr1);
