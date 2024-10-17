@@ -74,7 +74,7 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
     wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload;
     ethernet_header_t* eth_header =  (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_t));
-    if(type != WIFI_PKT_DATA){ return;}
+    //if(type != WIFI_PKT_DATA){ return;}
 
     if(eth_header->ethertype == 0x0800)
     {

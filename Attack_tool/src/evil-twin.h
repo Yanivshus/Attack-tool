@@ -17,6 +17,10 @@
 #include "lwip/sys.h"
 #include "packetSniffer.h"
 
+#define SSID "yaniv"
+
+
+
 
 void setUpAP();
 static void wifi_event_handler_AP(void* arg, esp_event_base_t even_base, int32_t event_id, void* event_data);
