@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "evil-twin.h": "c",
-        "packetsniffer.h": "c"
-    }
+        "packetsniffer.h": "c",
+        "stdio.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

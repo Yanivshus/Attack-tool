@@ -24,6 +24,12 @@ typedef struct {
 } __attribute__((packed)) wifi_mac_header_t;
 
 typedef struct {
+    uint8_t dest_mac[6];     // Destination MAC address
+    uint8_t src_mac[6];      // Source MAC address
+    uint16_t ethertype;      // Type of payload (0x0800 = IP, 0x0806 = ARP)
+} __attribute__((packed)) ethernet_header_t;
+
+typedef struct {
     uint8_t ver_ihl; //version + ihl
     uint8_t tos;
     uint16_t tlen;

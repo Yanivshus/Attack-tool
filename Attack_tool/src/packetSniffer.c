@@ -57,12 +57,13 @@ void printMac(uint8_t* srcmac, uint8_t* dstmac)
     printf("-----------------\n");
     printf("New packet received: \n");
     printf("src: %2x:%2x:%2x:%2x:%2x:%2x\n", srcmac[0],srcmac[1],
-                                           srcmac[2],srcmac[3],
-                                           srcmac[4],srcmac[5]);
+                                             srcmac[2],srcmac[3],
+                                             srcmac[4],srcmac[5]);
+
     printf("dst: %2x:%2x:%2x:%2x:%2x:%2x\n", dstmac[0],dstmac[1],
-                                           dstmac[2],dstmac[3],
-                                           dstmac[4],dstmac[5]);
-    int currChannel = 0;
+                                             dstmac[2],dstmac[3],
+                                             dstmac[4],dstmac[5]);
+    uint8_t currChannel = 0;
     esp_wifi_get_channel(&currChannel, NULL);
     printf("Curr channel: %d\n", currChannel);
     printf("------------------\n");
@@ -72,9 +73,26 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
 {
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
     wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload;
-
+    ethernet_header_t* eth_header =  (ethernet_header_t*)(pkt->payload + sizeof(wifi_mac_header_t));
     if(type != WIFI_PKT_DATA){ return;}
-    printMac(machdr->addr2,machdr->addr1);
+
+    if(eth_header->ethertype == 0x0800)
+    {
+        printMac(machdr->addr2,machdr->addr1);
+        printf("IP");
+    }
+    else if(eth_header->ethertype == 0x0806)
+    {
+        printMac(eth_header->src_mac, eth_header->dest_mac);
+        printf("ARP");
+    }else
+    {
+        puts("NOT");
+    }
+    
+    //printMac(machdr->addr2,machdr->addr1);
+
+    
 }
 
 
