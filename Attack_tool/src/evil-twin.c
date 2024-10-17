@@ -10,6 +10,7 @@ void setUpAP()
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler_AP, NULL,NULL));
     
+    // get best network to mock, better be open one so the user wont suspect, will work best in public places
     wifi_ap_record_t recNet = showNearbyNetworks();
 
 
@@ -24,6 +25,7 @@ void setUpAP()
         },
     };
     
+    // start the mock network.
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP,&wifi_conf));
     ESP_ERROR_CHECK(esp_wifi_start());
