@@ -28,6 +28,7 @@ wifi_ap_record_t showNearbyNetworks()
     ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&maxrec, wfrecords));
 
     wifi_ap_record_t bestrec;
+    
     int found = 0;
 
     printf("Found %d networks :\n", maxrec);
@@ -45,6 +46,7 @@ wifi_ap_record_t showNearbyNetworks()
     if(found == 0 && maxrec > 0){
         return wfrecords[0];
     }
+    
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_NULL));
     ESP_ERROR_CHECK(esp_netif_deinit());
     ESP_ERROR_CHECK(esp_wifi_deinit());

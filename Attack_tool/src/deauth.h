@@ -16,4 +16,17 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-void setUpDevice();
+#include "packetSniffer.h"
+
+typedef struct{
+    uint8_t mac[6];
+} __attribute__((packed)) mac_addr;
+
+
+typedef struct {
+
+
+
+} __attribute__((packed)) dauthPacket;
+
+void sendDeauthPacket();
