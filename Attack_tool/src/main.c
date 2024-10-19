@@ -1,5 +1,6 @@
 #include "evil-twin.h"
 #include "packetSniffer.h"
+#include "deauth.h"
 
 void app_main() {
     //Initialize NVS for memory.
@@ -11,7 +12,8 @@ void app_main() {
     }
     ESP_ERROR_CHECK(ret);
 
-    //setUpAP();
-    settingupPromiscuousMode();
+    setUp();
+    wifi_ap_record_t rec = showNearbyNetworks();
+    sendDeauthPacket(rec);
     
 }

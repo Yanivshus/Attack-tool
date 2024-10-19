@@ -16,6 +16,7 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
+
 #include "packetSniffer.h"
 
 typedef struct{
@@ -24,15 +25,14 @@ typedef struct{
 
 
 typedef struct {
-    uint8_t type;
-    uint8_t subtype;
+    uint16_t frame_control;
     uint16_t duration;
     uint8_t targetMac[6];
     uint8_t sourceMac[6]; //ap
     uint8_t bssid[6]; //ap
     uint16_t fragment_and_seq;
-    uint8_t rescode0;
-    uint8_t rescode1;
+    uint16_t rescode;
 } __attribute__((packed)) dauthPacket;
 
-void sendDeauthPacket();
+void sendDeauthPacket(wifi_ap_record_t rec);
+void setUp();
