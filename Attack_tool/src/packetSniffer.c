@@ -54,7 +54,7 @@ wifi_ap_record_t showNearbyNetworks()
     return bestrec; // else return the open 1.
 }
 
-void printMac(uint8_t* srcmac, uint8_t* dstmac)
+void printMac(uint8_t* srcmac, uint8_t* dstmac, uint8_t subtype)
 {
     printf("src: %2x:%2x:%2x:%2x:%2x:%2x\n", srcmac[0],srcmac[1],
                                              srcmac[2],srcmac[3],
@@ -63,14 +63,25 @@ void printMac(uint8_t* srcmac, uint8_t* dstmac)
     printf("dst: %2x:%2x:%2x:%2x:%2x:%2x\n", dstmac[0],dstmac[1],
                                              dstmac[2],dstmac[3],
                                              dstmac[4],dstmac[5]);
+    printf("subtype: %x\n", subtype);
+                                            
 }
 
 void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
 {
-    if(type != WIFI_PKT_DATA){ return;} // only data packet metter.
+    if(type != WIFI_PKT_MGMT){ return;} // only data packet metter.
 
     wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
-    logRawPacket(pkt->payload, pkt->rx_ctrl.sig_len);
+    wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload; 
+    wifi_frame_control_t ctrl;
+    ctrl.frame_control_value = machdr->frame_control;
+    
+    printf("FOUND PACKET\n");
+    printMac(machdr->addr2, machdr->addr1, machdr->frame_control);
+    
+
+
+    /*logRawPacket(pkt->payload, pkt->rx_ctrl.sig_len);
 
     wifi_mac_header_t* machdr = (wifi_mac_header_t*)pkt->payload; // get init mac header
 
@@ -107,9 +118,10 @@ void handlePromPackets(void *buf, wifi_promiscuous_pkt_type_t type)
     printMac(eth_header->src_mac, eth_header->dest_mac);
     printMac(machdr->addr2, machdr->addr1);
     printf("-------------\n");
+    */
 
-    printf("ethertype: %x\n", __ntohs(eth_header->ethertype));
-    /*if(eth_header->ethertype == 0x0800)
+    /*printf("ethertype: %x\n", __ntohs(eth_header->ethertype));
+    if(eth_header->ethertype == 0x0800)
     {
         printMac(machdr->addr2,machdr->addr1);
         printf("IP");
@@ -156,13 +168,13 @@ void settingupPromiscuousMode()
     wifi_promiscuous_cb_t cb = (wifi_promiscuous_cb_t)handlePromPackets;
     esp_wifi_set_promiscuous_rx_cb(cb);
 
-    wifi_promiscuous_filter_t filter;
+    /*wifi_promiscuous_filter_t filter;
     filter.filter_mask = WIFI_PROMIS_FILTER_MASK_ALL;
-    esp_wifi_set_promiscuous_filter(&filter);
+    esp_wifi_set_promiscuous_filter(&filter);*/
 
     esp_wifi_set_promiscuous(true);
 
-    xTaskCreate(channel_hopper , "channel_hopp", 8192, NULL, 10, NULL);
+    //xTaskCreate(channel_hopper , "channel_hopp", 8192, NULL, 10, NULL);
 
 }
 void channel_hopper(void *param)

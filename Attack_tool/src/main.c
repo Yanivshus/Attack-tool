@@ -12,8 +12,6 @@ void app_main() {
     }
     ESP_ERROR_CHECK(ret);
 
-    setUp();
-    wifi_ap_record_t rec = showNearbyNetworks();
-    sendDeauthPacket(rec);
+    settingupPromiscuousMode();
     
 }
